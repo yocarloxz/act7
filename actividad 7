@@ -1,0 +1,217 @@
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class CalculadoraGeometrica {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<String> resultados = new ArrayList<>();
+        boolean continuar = true;
+
+        while (continuar) {
+            try {
+                // Mostrar el menú principal
+                int opcionFigura = mostrarMenuFiguras(scanner);
+
+                if (opcionFigura == 7) {
+                    mostrarResultados(resultados);
+                    continue;
+                }
+
+                if (opcionFigura == 8) {
+                    System.out.println("Saliendo del programa...");
+                    break;
+                }
+
+                if (opcionFigura == 6) {
+                    double base = pedirNumero(scanner, "Ingrese la base:");
+                    int exponente = (int) pedirNumero(scanner, "Ingrese el exponente:");
+                    double resultadoPotencia = calcularPotencia(base, exponente);
+                    String descripcion = String.format("Potencia: %.2f ^ %d = %.2f", base, exponente, resultadoPotencia);
+                    resultados.add(descripcion);
+                    System.out.println(descripcion);
+                } else {
+                    int opcionOperacion = mostrarMenuOperaciones(scanner);
+                    double resultado = calcularFigura(opcionFigura, opcionOperacion, scanner);
+                    String descripcion = generarDescripcion(opcionFigura, opcionOperacion, resultado);
+                    resultados.add(descripcion);
+                    System.out.println(descripcion);
+                }
+
+                continuar = preguntarContinuar(scanner);
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Entrada no válida. Por favor, intente nuevamente.");
+                scanner.next();
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static int mostrarMenuFiguras(Scanner scanner) {
+        int opcionFigura = 0;
+        while (opcionFigura < 1 || opcionFigura > 8) {
+            System.out.println("\nSeleccione la figura geométrica:");
+            System.out.println("1. Círculo");
+            System.out.println("2. Cuadrado");
+            System.out.println("3. Triángulo");
+            System.out.println("4. Rectángulo");
+            System.out.println("5. Pentágono");
+            System.out.println("6. Calcular Potencia");
+            System.out.println("7. Ver Resultados");
+            System.out.println("8. Salir");
+            System.out.print("Opción: ");
+            try {
+                opcionFigura = scanner.nextInt();
+                if (opcionFigura < 1 || opcionFigura > 8) {
+                    System.out.println("Opción no válida. Por favor, seleccione una opción entre 1 y 8.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Entrada no válida. Por favor, ingrese un número entre 1 y 8.");
+                scanner.next();
+            }
+        }
+        return opcionFigura;
+    }
+
+    private static int mostrarMenuOperaciones(Scanner scanner) {
+        int opcionOperacion = 0;
+        while (opcionOperacion < 1 || opcionOperacion > 2) {
+            System.out.println("\n¿Qué operación desea realizar?");
+            System.out.println("1. Calcular Área");
+            System.out.println("2. Calcular Perímetro");
+            System.out.print("Opción: ");
+            opcionOperacion = scanner.nextInt();
+            if (opcionOperacion < 1 || opcionOperacion > 2) {
+                System.out.println("Por favor, seleccione una opción válida (1 o 2).");
+            }
+        }
+        return opcionOperacion;
+    }
+
+    private static double pedirNumero(Scanner scanner, String mensaje) {
+        System.out.print(mensaje);
+        return scanner.nextDouble();
+    }
+
+    private static double calcularFigura(int opcionFigura, int opcionOperacion, Scanner scanner) {
+        switch (opcionFigura) {
+            case 1:
+                return calcularCirculo(opcionOperacion, scanner);
+            case 2:
+                return calcularCuadrado(opcionOperacion, scanner);
+            case 3:
+                return calcularTriangulo(opcionOperacion, scanner);
+            case 4:
+                return calcularRectangulo(opcionOperacion, scanner);
+            case 5:
+                return calcularPentagono(opcionOperacion, scanner);
+            default:
+                return 0;
+        }
+    }
+
+    private static String generarDescripcion(int opcionFigura, int opcionOperacion, double resultado) {
+        String figura = "";
+        String operacion = opcionOperacion == 1 ? "Área" : "Perímetro";
+
+        switch (opcionFigura) {
+            case 1:
+                figura = "Círculo";
+                break;
+            case 2:
+                figura = "Cuadrado";
+                break;
+            case 3:
+                figura = "Triángulo";
+                break;
+            case 4:
+                figura = "Rectángulo";
+                break;
+            case 5:
+                figura = "Pentágono";
+                break;
+        }
+
+        return String.format("%s del %s: %.2f", operacion, figura, resultado);
+    }
+
+    private static double calcularCirculo(int opcionOperacion, Scanner scanner) {
+        double radio = pedirNumero(scanner, "Ingrese el radio del círculo: ");
+        if (opcionOperacion == 1) {
+            return Math.PI * Math.pow(radio, 2);
+        } else {
+            return 2 * Math.PI * radio;
+        }
+    }
+
+    private static double calcularCuadrado(int opcionOperacion, Scanner scanner) {
+        double lado = pedirNumero(scanner, "Ingrese el lado del cuadrado: ");
+        if (opcionOperacion == 1) {
+            return Math.pow(lado, 2);
+        } else {
+            return 4 * lado;
+        }
+    }
+
+    private static double calcularTriangulo(int opcionOperacion, Scanner scanner) {
+        if (opcionOperacion == 1) {
+            double base = pedirNumero(scanner, "Ingrese la base del triángulo: ");
+            double altura = pedirNumero(scanner, "Ingrese la altura del triángulo: ");
+            return (base * altura) / 2;
+        } else {
+            double lado1 = pedirNumero(scanner, "Ingrese el lado 1 del triángulo: ");
+            double lado2 = pedirNumero(scanner, "Ingrese el lado 2 del triángulo: ");
+            double lado3 = pedirNumero(scanner, "Ingrese el lado 3 del triángulo: ");
+            return lado1 + lado2 + lado3;
+        }
+    }
+
+    private static double calcularRectangulo(int opcionOperacion, Scanner scanner) {
+        double largo = pedirNumero(scanner, "Ingrese el largo del rectángulo: ");
+        double ancho = pedirNumero(scanner, "Ingrese el ancho del rectángulo: ");
+        if (opcionOperacion == 1) {
+            return largo * ancho;
+        } else {
+            return 2 * (largo + ancho);
+        }
+    }
+
+    private static double calcularPentagono(int opcionOperacion, Scanner scanner) {
+        double lado = pedirNumero(scanner, "Ingrese el lado del pentágono: ");
+        if (opcionOperacion == 1) {
+            double apotema = pedirNumero(scanner, "Ingrese la apotema del pentágono: ");
+            return (5 * lado * apotema) / 2;
+        } else {
+            return 5 * lado;
+        }
+    }
+
+    private static double calcularPotencia(double base, int exponente) {
+        if (exponente == 0) {
+            return 1;
+        } else if (exponente > 0) {
+            return base * calcularPotencia(base, exponente - 1);
+        } else {
+            return 1 / calcularPotencia(base, -exponente);
+        }
+    }
+
+    private static boolean preguntarContinuar(Scanner scanner) {
+        System.out.println("¿Desea realizar otra operación? (s/n): ");
+        char respuesta = scanner.next().toLowerCase().charAt(0);
+        return respuesta == 's';
+    }
+
+    private static void mostrarResultados(ArrayList<String> resultados) {
+        System.out.println("\nResultados guardados:");
+        if (resultados.isEmpty()) {
+            System.out.println("No hay resultados para mostrar.");
+        } else {
+            for (String resultado : resultados) {
+                System.out.println(resultado);
+            }
+        }
+    }
+}
